@@ -1,0 +1,27 @@
+{
+  "name": "microgrid-energy-monitoring",
+  "version": "1.0.0",
+  "description": "Complete full-stack microgrid energy monitoring application with React, Express, PostgreSQL, and Docker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "./start.sh",
+    "dev": "docker-compose up --build",
+    "stop": "docker-compose down",
+    "clean": "docker-compose down -v && docker system prune -f",
+    "logs": "docker-compose logs -f"
+  },
+  "keywords": [
+    "microgrid",
+    "energy-monitoring",
+    "react",
+    "express",
+    "postgresql",
+    "docker",
+    "dashboard"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "docker": ">=20.0.0"
+  }
+}

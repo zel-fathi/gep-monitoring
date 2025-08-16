@@ -1,0 +1,18 @@
+# Node / Vite
+node_modules/
+.vite/
+dist/
+*.log
+
+# Env
+.env
+.env.*
+
+# Frontend build
+frontend/dist/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
