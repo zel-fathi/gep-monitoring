@@ -1,0 +1,209 @@
+openapi: 3.0.3
+info:
+  title: Microgrid Energy Monitoring API
+  version: "1.0.0"
+  description: |
+    This API provides endpoints to monitor and manage microgrid energy consumption.
+    It includes authentication, energy data operations, metrics retrieval, user
+    management, and data export. Clients authenticate via JWT tokens obtained
+    from the `/token` endpoint and must include the token in the `Authorization`
+    header (e.g. `Bearer &lt;token&gt;`) for protected routes.
+servers:
+  - url: /api
+    description: Relative API base path
+paths:
+  /token:
+    post:
+      summary: Login and obtain JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin123
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Successful login
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Server is healthy
+  /data:
+    get:
+      summary: Get energy data
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of records to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number for client‑side pagination
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: Filter start timestamp (ISO 8601)
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: Filter end timestamp (ISO 8601)
+      responses:
+        '200':
+          description: List of energy data points
+    post:
+      summary: Upload CSV data (Admin only)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Data upload result
+  /data/{id}:
+    get:
+      summary: Get single energy data record
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Data record
+    put:
+      summary: Update energy data (Admin only)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                timestamp:
+                  type: string
+                  format: date-time
+                consumption:
+                  type: number
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete energy data record (Admin only)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: Deleted
+  /metrics:
+    get:
+      summary: Get key performance indicators
+      responses:
+        '200':
+          description: KPI metrics
+  /metrics/summary:
+    get:
+      summary: Get summary metrics
+      responses:
+        '200':
+          description: Summary metrics
+  /users:
+    get:
+      summary: List users (Admin only)
+      responses:
+        '200':
+          description: List of users
+    post:
+      summary: Create user (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                is_admin:
+                  type: boolean
+              required:
+                - username
+                - password
+      responses:
+        '201':
+          description: User created
+  /users/{id}:
+    delete:
+      summary: Delete user (Admin only)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: User deleted
+  /export/data.csv:
+    get:
+      summary: Export data as CSV
+      responses:
+        '200':
+          description: CSV file
+  /export/metrics.csv:
+    get:
+      summary: Export metrics as CSV
+      responses:
+        '200':
+          description: CSV file
+  /export/report.md:
+    get:
+      summary: Export report as Markdown
+      responses:
+        '200':
+          description: Markdown report
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
