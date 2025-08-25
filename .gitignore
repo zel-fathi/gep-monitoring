@@ -6,7 +6,7 @@ dist/
 
 # Env
 .env
-.env.*
+
 
 # Frontend build
 frontend/dist/
